@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export COMPOSE_FILE=docker-compose-cli.yaml
+export COMPOSE_PROJECT_NAME="aqui"
 
 docker-compose -f $COMPOSE_FILE down
 
@@ -11,4 +12,4 @@ DOCKER_IMAGE_IDS=$(docker images | grep "dev\|none\|test-vp\|peer[0-9]-" | awk '
     docker rmi -f $DOCKER_IMAGE_IDS
   fi
   
-rm -rf channel-artifacts crypto-config chaincode scripts
+rm -rf channel-artifacts crypto-config
