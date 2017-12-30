@@ -25,3 +25,5 @@ configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts
 
 # Generating anchor peer update for Org2MSP
 configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+
+docker-compose -f $COMPOSE_FILE up -d 2>&1
