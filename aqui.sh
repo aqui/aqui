@@ -4,7 +4,7 @@ rm -r channel-artifacts
 
 mkdir channel-artifacts
 
-export FABRIC_CFG_PATH=.
+export FABRIC_CFG_PATH=$PWD
 export CHANNEL_NAME="mychannel"
 export CLI_TIMEOUT=12000
 export CLI_DELAY=3
@@ -28,4 +28,5 @@ configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts
 # Generating anchor peer update for Org2MSP
 configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
 
-docker-compose -f $COMPOSE_FILE up -d
+# Pass -d to see real-time logs
+docker-compose -f $COMPOSE_FILE up
