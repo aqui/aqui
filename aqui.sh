@@ -1,7 +1,5 @@
 #!/bin/bash
 
-rm -r channel-artifacts
-
 mkdir channel-artifacts
 
 export FABRIC_CFG_PATH=$PWD
