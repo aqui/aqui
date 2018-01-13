@@ -1,30 +1,31 @@
 #!/bin/bash
 
-mkdir channel-artifacts
+# Exit on first error, print all commands.
+set -ev
+
+# don't rewrite paths for Windows Git Bash users
+export MSYS_NO_PATHCONV=1
+
+#mkdir channel-artifacts
 
 export FABRIC_CFG_PATH=$PWD
 export CHANNEL_NAME="mychannel"
 export CLI_TIMEOUT=12000
 export CLI_DELAY=3
-export COMPOSE_FILE=docker-compose-cli.yaml
 export LANGUAGE=golang
-export COMPOSE_HTTP_TIMEOUT=12000
-export COMPOSE_PROJECT_NAME="aqui"
-
-# Generate certificates using cryptogen tool
-cryptogen generate --config=./crypto-config.yaml
-
-# Generate Orderer Genesis block
-configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
-
-# Generating channel configuration transaction channel.tx
-configtxgen -profile TwoOrgsChannel -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
-
-# Generating anchor peer update for Org1MSP
-configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
-
-# Generating anchor peer update for Org2MSP
-configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate ./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+export FABRIC_START_TIMEOUT=3
 
 # Pass -d to see real-time logs
-docker-compose -f $COMPOSE_FILE up
+COMPOSE_PROJECT_NAME=aqui COMPOSE_HTTP_TIMEOUT=12000 docker-compose -f docker-compose.yaml up -d ca.example.com 
+sleep ${FABRIC_START_TIMEOUT}
+COMPOSE_PROJECT_NAME=aqui COMPOSE_HTTP_TIMEOUT=12000 docker-compose -f docker-compose.yaml up -d orderer.example.com 
+sleep ${FABRIC_START_TIMEOUT}
+COMPOSE_PROJECT_NAME=aqui COMPOSE_HTTP_TIMEOUT=12000 docker-compose -f docker-compose.yaml up -d peer0.org1.example.com 
+sleep ${FABRIC_START_TIMEOUT}
+COMPOSE_PROJECT_NAME=aqui COMPOSE_HTTP_TIMEOUT=12000 docker-compose -f docker-compose.yaml up -d peer1.org1.example.com 
+sleep ${FABRIC_START_TIMEOUT}
+COMPOSE_PROJECT_NAME=aqui COMPOSE_HTTP_TIMEOUT=12000 docker-compose -f docker-compose.yaml up -d peer0.org2.example.com 
+sleep ${FABRIC_START_TIMEOUT}
+COMPOSE_PROJECT_NAME=aqui COMPOSE_HTTP_TIMEOUT=12000 docker-compose -f docker-compose.yaml up -d peer1.org2.example.com
+sleep ${FABRIC_START_TIMEOUT}
+COMPOSE_PROJECT_NAME=aqui COMPOSE_HTTP_TIMEOUT=12000 docker-compose -f docker-compose.yaml up -d cli
